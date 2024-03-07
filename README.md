@@ -2,17 +2,6 @@
 
 ## Presented By:
 
-<table align="center">
-  <tr>
-    <td>
-      <img src="images\logo-group.png" alt="Market Insider" style="width: 70%; display: block; margin: 0 auto;">
-    </td>
-    <td>
-      <img src="images\rakamin-academy.png" alt="Rakamin" style="width: 35%; display: block; margin: 0 auto;">
-    </td>
-  </tr>
-</table>
-
 ### The Best Group of Final Project [🏆 Certificate of Awardee](images\awardee.png)
 
 <p align="center">
