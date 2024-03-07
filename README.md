@@ -2,7 +2,7 @@
 
 ## Presented By:
 
-### The Best Group of Final Project [🏆 Certificate of Awardee](images\awardee.png)
+### The Best Group of Final Project 🏆 | [Certificate of Awardee](images/awardee.png)
 
 <p align="center">
   <img src="images\team.png" alt="Team">
