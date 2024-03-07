@@ -1,62 +1,89 @@
-# Project Name
+# Marketing Campaign Analysis
+
+## Presented By:
+
+<table align="center">
+  <tr>
+    <td>
+      <img src="images\logo-group.png" alt="Market Insider" style="width: 70%; display: block; margin: 0 auto;">
+    </td>
+    <td>
+      <img src="images\rakamin-academy.png" alt="Rakamin" style="width: 35%; display: block; margin: 0 auto;">
+    </td>
+  </tr>
+</table>
+
+### The Best Group of Final Project [🏆 Certificate of Awardee](images\awardee.png)
+
+<p align="center">
+  <img src="images\team.png" alt="Team">
+</p>
 
 ## Table of Contents
 
 - [Business Understanding](#business-understanding)
 - [Data Understanding](#data-understanding)
 - [Data Preprocessing](#data-preprocessing)
-- [Modelling &amp; Evaluation](#modelling--evaluation)
-- [Summary &amp; Recommendation](#summary--recommendation)
+- [Modelling and Evaluation](#modelling--evaluation)
+- [Summary and Recommendation](#summary--recommendation)
 
-## Business Understanding
+---
 
-**Problem Statements:** 🎯
+## Business Understanding 🎯
+
+### **Problem Statements :**
 
 Sebuah perusahaan melaksanakan kampanye pemasaran, dimana kampanye pemasaran terakhirnya hanya berhasil meraih respons sebesar 14.91% dari 2240 pelanggan.
 
-**Objective:** 🚀
+### **Objective:**
 
 Membuat model prediktif untuk memprediksi response pelanggan
 
-**Business Metrics:** 📊
+### **Business Metrics:**
 
 Response Rate (Primary Metrics), Profit Margin (Secondary Metrics)
 
-**Goals:** 🎯
+### **Goals:**
 
 Merekomendasikan actionable business insight kepada tim Marketing dan Meningkatkan Response Rate dan Profit Margin dari marketing campaign
 
-## Data Understanding
+---
 
-**Data Overview**
+## Data Understanding 📋
 
-* Dimensi Data: `2240 baris, 29 kolom`
-* Tipe Data: `26 Numerik, 3 Kategori`
-* Missing Values: 1.07%
-* Duplicates: `8.12%`
-* Outliers: `Year_Birth` dan `Income`
-* Invalid Values: `Marital_Status` dan `Education`
-* Invalid Tipe Data: `Dt_Customer`
-* All Unique Values: `ID`, `Z_CostContact`, `Z_Revenue`
+### **Data Overview**
 
-## Data Preprocessing
+- Dimensi Data: `2240 baris, 29 kolom`
+- Tipe Data: `26 Numerik, 3 Kategori`
+- Missing Values: `1.07%`
+- Duplicates: `8.12%`
+- Outliers: `Year_Birth` dan `Income`
+- Invalid Values: `Marital_Status` dan `Education`
+- Invalid Tipe Data: `Dt_Customer`
+- All Unique Values: `ID`, `Z_CostContact`, `Z_Revenue`
 
-**Data Cleansing:**
+---
+
+## Data Preprocessing 🛠️
+
+### **Data Cleansing:**
 
 1. Handling Missing Values: Drop missing values
 2. Handling Duplicates: Drop Duplicates
 3. Handling Outliers: Drop Outliers (Z-Score)
 4. Handling Invalid Values: Replace values
 
-**Feature Engineering:**
+### **Feature Engineering:**
 
 1. Feature Extraction: RFM Cat, Customer Lifespan, Total Purchase, Total Spending, Total Offers, dll
 2. Feature Encoding: Ordinal Encoding (Education, Marital Status), Label Encoding (RFM Cat, Relationship Status, Primary Needs)
 3. Feature Transformation: 11 Feature Normalisasi (min-max scaler), 19 Feature Standarisasi (PowerTransformers) - Berdasarkan Nilai Kemiringan (Skew)
 4. Feature Selection: ANOVA dan Chi-Square, VIF (Redundancy Feature)
-5. Imbalance Handling: SMOTE, oversampling class 1 (1397:251 >> 1397:1397)
+5. Imbalance Handling: SMOTE, oversampling class 1 (1397:251 | 1397:1397)
 
-## Modelling & Evaluation
+---
+
+## Modelling & Evaluation 🤖
 
 ### **Default Parameter**
 
@@ -76,12 +103,9 @@ Merekomendasikan actionable business insight kepada tim Marketing dan Meningkatk
 | XGBClassifier                | 0.840023           | 0.864710           | 0.807339           | 0.057371           | 6.634668           |
 | **AdaBoostClassifier** | **0.861142** | **0.879742** | **0.816514** | **0.063229** | **7.187166** |
 
-Berdasarkan hasil evaluasi model, AdaBoostClassifier dipilih sebagai model yang akan digunakan karena 3 hal, yaitu:
+Berdasarkan hasil evaluasi model, model adaboost akan digunakan sebagai model yang akan digunakan karena mempunyai CV Precision Score yang tinggi 87% dan FIT Rate yang masih di bawah 10% yakni 6.47%.
 
-1. Mempunyai CV Precision Score yang tinggi 87%
-2. FIT Rate yang masih di bawah 10% yakni 6.47%
-
-### **Hyperparameter Tuning
+### **Hyperparameter Tuning**
 
 **Hyperparameter Tuning - Precision**
 
@@ -99,15 +123,15 @@ Berdasarkan hasil evaluasi model, AdaBoostClassifier dipilih sebagai model yang 
 | **param_56** | **AdaBoostClassifier** | **0.871889** | **0.918397** | **0.850917** | **0.067479** | **7.347494** |
 | param_52           | AdaBoostClassifier           | 0.870808           | 0.912312           | 0.830275           | 0.082037           | 8.992193           |
 
-**Feature Importance**
 ![Feature Importance](images/feature-importance-adb.png)
-10 Feature dengan score tertinggi akan digunakan sebagai acuan dalam Business Recommendation dan Future Model.
+
+---
 
 ## Summary & Recommendation
 
 ### **Business Simulation**
 
-Menggunakan asumsi cost/promosi adalah 3 USD dan revenue/promosi adalah 11 USD, berikut simulasinya untuk menghitung profit margin.
+Menggunakan asumsi cost/promosi adalah **3 USD** dan revenue/promosi adalah **11 USD**, berikut simulasinya untuk menghitung profit margin.
 
 |                | Sebelum Model | Sesudah Model |
 | -------------- | ------------: | ------------: |
@@ -121,8 +145,8 @@ Menggunakan asumsi cost/promosi adalah 3 USD dan revenue/promosi adalah 11 USD, 
 
 ### **Business Insight & Recommendation**
 
-Berdasarkan hasil analisa, pelanggan dengan `segmentasi loyal` dan pelanggan dengan `level pendidikan graduation` adalah yang paling banyak proporsinya yakni **40% adalah pelanggan loyal** dan **53% adalah berpendidikan graduation**. Oleh sebab itu, 2 kategori ini menjadi target promosi dengan recency berkisar antara 32-46 hari dan customer lifespan 393-495 hari. Recency dan Customer Lifespan dihitung menggunakan *[confidence interval mean](https://www.investopedia.com/terms/c/confidenceinterval.asp)* (confidence level 95%).
+Berdasarkan hasil analisa, pelanggan dengan segmentasi loyal dan pelanggan dengan level pendidikan graduation adalah yang paling banyak proporsinya yakni **40% adalah pelanggan loyal** dan **53% adalah berpendidikan graduation**. Oleh sebab itu, 2 kategori ini menjadi target promosi dengan recency berkisar antara 32-46 hari dan customer lifespan 393-495 hari. Recency dan Customer Lifespan dihitung menggunakan *[confidence interval mean](https://www.investopedia.com/terms/c/confidenceinterval.asp)* (confidence level 95%).
 
 ## Dependencies
 
-Daftar library yang digunakan [cek disini](requirements.txt)
+Daftar library dan versionnya yang digunakan [cek disini](requirements.txt)
