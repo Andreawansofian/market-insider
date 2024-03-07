@@ -1,114 +1,128 @@
-### **Summary Descriptive Statistics**
+# Project Name
 
-1. **Kolom dengan Tipe Data Tidak Sesuai:**
+## Table of Contents
 
-   - Kolom `Dt_Customer` merupakan tanggal registrasi pelanggan dengan tipe data object. Perlu diubah menjadi tipe Date Time.
+- [Business Understanding](#business-understanding)
+- [Data Understanding](#data-understanding)
+- [Data Preprocessing](#data-preprocessing)
+- [Modelling &amp; Evaluation](#modelling--evaluation)
+- [Summary &amp; Recommendation](#summary--recommendation)
 
-2. **Kolom dengan Nilai Kosong:**
+## Business Understanding
 
-   - Kolom `Income` memiliki nilai kosong pada 2216 baris.
+**Problem Statements:** 🎯
 
-3. **Kolom dengan Summary Aneh:**
+Sebuah perusahaan melaksanakan kampanye pemasaran, dimana kampanye pemasaran terakhirnya hanya berhasil meraih respons sebesar 14.91% dari 2240 pelanggan.
 
-   - Kolom `ID` memiliki jumlah nilai unik yang sama dengan jumlah baris dataset (2240), sehingga tidak memungkinkan untuk mengamati riwayat perjalanan pelanggan.
-   - Kolom `Z_CostContact` dan `Z_Revenue` hanya memiliki satu data unik.
-   - Kolom `Dt_Customer` menunjukkan keanehan dengan pelanggan terakhir melakukan registrasi pada 29 Juni 2014. Terdapat juga keanehan pada `Year Birth` dengan tahun lahir tertua adalah 1893.
-   - Kolom `Income` memiliki nilai maksimum mencapai ratusan ribu (666,666), sedangkan nilai ukuran pemusatan dan penyebarannya hanya mencapai puluhan ribu, diduga sebagai outlier.
-   - Beberapa kolom seperti `MntFishProducts`, `MntFruits`, `MntGoldProds`, `MntMeatProducts`, `MntSweetProducts`, `MntWines` memiliki nilai maksimum yang jauh dari ukuran pemusatan atau penyebaran lainnya, menunjukkan adanya outlier.
-   - Kolom `Marital Status` memiliki 8 nilai unik.
+**Objective:** 🚀
 
-### **Summary EDA**
+Membuat model prediktif untuk memprediksi response pelanggan
 
-1. **Berdasarkan KDE Plot:**
+**Business Metrics:** 📊
 
-   - **Normal Distribution:**
-     - `Recency` memiliki distribusi yang mirip dengan distribusi normal.
-   - **Left-Skewed Distribution:**
-     - `Year_Birth` menunjukkan kecondongan ke kiri dengan median yang lebih tinggi daripada mean.
-   - **Right-Skewed Distribution:**
-     - `Income` dan beberapa features terkait pembelian produk menunjukkan kecondongan ke kanan, dengan mean yang lebih tinggi daripada median.
-   - **Bimodal Distribution:**
-     - `Kidhome` dan `Teenhome` menunjukkan dua puncak dalam distribusinya.
-   - **Binary Dominated Distribution:**
-     - Beberapa features campaign (`AcceptedCmp1`, `AcceptedCmp2`, `AcceptedCmp3`, `AcceptedCmp4`, `AcceptedCmp5`, dan `Responsee`) didominasi oleh nilai 0.
+Response Rate (Primary Metrics), Profit Margin (Secondary Metrics)
 
-2. **Berdasarkan Box Plot:**
+**Goals:** 🎯
 
-   - `Year_Birth` dan `Income` memiliki outlier yang perlu dicermati lebih lanjut.
-   - Beberapa features terkait pembelian produk dan aktivitas pembelian memiliki banyak nilai outlier pada nilai tinggi, menunjukkan variasi yang signifikan dalam pola pembelian atau aktivitas pelanggan.
+Merekomendasikan actionable business insight kepada tim Marketing dan Meningkatkan Response Rate dan Profit Margin dari marketing campaign
 
-3. **Berdasarkan Count Plot (Categorical Feature):**
+## Data Understanding
 
-   - **Level Pendidikan:**
-     - Mayoritas pelanggan memiliki tingkat pendidikan "Graduation," menunjukkan target pasar utama.
-   - **Status Perkawinan:**
-     - Mayoritas pelanggan memiliki status perkawinan "Married," menunjukkan dominasi pasangan dalam populasi pelanggan.
+**Data Overview**
 
-4. **Berdasarkan Lineplot (Datetime Feature):**
+* Dimensi Data: `2240 baris, 29 kolom`
+* Tipe Data: `26 Numerik, 3 Kategori`
+* Missing Values: 1.07%
+* Duplicates: `8.12%`
+* Outliers: `Year_Birth` dan `Income`
+* Invalid Values: `Marital_Status` dan `Education`
+* Invalid Tipe Data: `Dt_Customer`
+* All Unique Values: `ID`, `Z_CostContact`, `Z_Revenue`
 
-   - Terdapat fluktuasi dalam pendaftaran pelanggan selama periode Juli-2012 hingga Juni-2014.
-   - Puncak pendaftaran terjadi pada bulan Agustus-2012 dan Oktober-2013.
-   - Tren menunjukkan jumlah pendaftaran yang lebih rendah pada awal dan akhir periode, menunjukkan potensi pola musiman atau faktor lain yang memengaruhi pendaftaran pelanggan.
+## Data Preprocessing
 
-5. **Berdasarkan Regression Plot (Numerical Feature vs Target):**
+**Data Cleansing:**
 
-   - Beberapa faktor seperti pendapatan, jumlah anak, recency, dan tahun kelahiran pelanggan memiliki korelasi yang kuat terhadap kemungkinan pelanggan merespon.
-   - Spending pada produk tertentu, terutama `MeatProducts`, juga memiliki korelasi positif yang signifikan dengan `Response`.
-   - Jenis pembelian melalui Katalog dan Web memberikan kontribusi positif yang signifikan terhadap kemungkinan pelanggan merespon, sementara pembelian dengan diskon atau melalui toko fisik tidak menunjukkan korelasi yang signifikan.
-   - Campaign (`AcceptedCmp1`, `AcceptedCmp2`, `AcceptedCmp3`, `AcceptedCmp4`, `AcceptedCmp5`) juga memiliki korelasi positif yang signifikan terhadap `Response`.
+1. Handling Missing Values: Drop missing values
+2. Handling Duplicates: Drop Duplicates
+3. Handling Outliers: Drop Outliers (Z-Score)
+4. Handling Invalid Values: Replace values
 
-6. **Berdasarkan Lineplot (Datetime Feature vs Target):**
+**Feature Engineering:**
 
-   - Pada rentang waktu Juli 2012 hingga Juni 2014, lebih banyak pelanggan yang mendaftar namun tidak merespon campaign.
-   - Puncak pendaftaran dan respon terjadi pada Agustus 2012 - September 2012, namun jumlahnya cenderung menurun hingga akhir periode.
-   - Analisis ini memberikan gambaran tentang dinamika pendaftaran dan respon campaign selama periode tersebut, yang dapat menjadi dasar untuk strategi pemasaran yang lebih efektif di masa depan.
+1. Feature Extraction: RFM Cat, Customer Lifespan, Total Purchase, Total Spending, Total Offers, dll
+2. Feature Encoding: Ordinal Encoding (Education, Marital Status), Label Encoding (RFM Cat, Relationship Status, Primary Needs)
+3. Feature Transformation: 11 Feature Normalisasi (min-max scaler), 19 Feature Standarisasi (PowerTransformers) - Berdasarkan Nilai Kemiringan (Skew)
+4. Feature Selection: ANOVA dan Chi-Square, VIF (Redundancy Feature)
+5. Imbalance Handling: SMOTE, oversampling class 1 (1397:251 >> 1397:1397)
 
-7. **Berdasarkan Stacked Bar (Categorical Feature (normalize) vs Target):**
+## Modelling & Evaluation
 
-   - **Insight Response Campaign Berdasarkan Tingkat Pendidikan:**
-     - Tingkat Response Tinggi pada Tingkat Pendidikan Tinggi: PhD (20.78%), Master (15.41%), dan Graduation (13.48%).
-     - Varian Response pada Tingkat Pendidikan Rendah, dengan Basic (3.70%) lebih rendah dibandingkan dengan 2n Cycle (10.84%) dan Graduation (13.49%).
-     - Pentingnya Pendidikan dalam Pengaruh Response.
+### **Default Parameter**
 
-   - **Insight Response Campaign Berdasarkan Status Perkawinan:**
-     - Perbedaan Signifikan pada Tingkat Response: "Married" memiliki tingkat Response yang lebih rendah (11.34%) dibandingkan dengan "Divorced" (20.69%), "Single" (22.08%), dan "Together" (10.35%).
-     - Tingkat Response Tinggi pada Status Perkawinan "Single" dan "Divorced" (22.08% dan 20.69%).
-     - Pentingnya Personalisasi Campaign untuk Setiap Status Perkawinan.
+**Default Parameter - Precision**
 
-8. **Berdasarkan Korelasi Koefisien (Heatmap):**
+| Model                        | CV Precision       | Precision_Train    | Precision_Test     | Diff               | Diff (%)           |
+| ---------------------------- | ------------------ | ------------------ | ------------------ | ------------------ | ------------------ |
+| SVC                          | 0.799378           | 0.856226           | 0.836876           | 0.019350           | 2.259904           |
+| XGBClassifier                | 0.847233           | 0.864785           | 0.827637           | 0.037148           | 4.295622           |
+| **AdaBoostClassifier** | **0.872463** | **0.879967** | **0.822993** | **0.056974** | **6.474576** |
 
-   - **Pentingnya Korelasi Antara Feature:**
-     - Korelasi Positif terhadap Target pada campaign, produk spending, dan channel penjualan.
-     - Korelasi Negatif terhadap Target hanya pada Recency dan jumlah anak.
-     - Korelasi Tinggi Antara Beberapa Pasang Feature, menunjukkan adanya multicollinearity.
-     - Rekomendasi untuk Proses Modeling.
+**Default Parameter - Accuracy**
 
-### **Summary Business Insights**
+| Model                        | CV Accuracy        | Accuracy_Train     | Accuracy_Test      | Diff               | Diff (%)           |
+| ---------------------------- | ------------------ | ------------------ | ------------------ | ------------------ | ------------------ |
+| SVC                          | 0.832502           | 0.852899           | 0.743119           | 0.109780           | 12.871371          |
+| XGBClassifier                | 0.840023           | 0.864710           | 0.807339           | 0.057371           | 6.634668           |
+| **AdaBoostClassifier** | **0.861142** | **0.879742** | **0.816514** | **0.063229** | **7.187166** |
 
-Berdasarkan analisis mendalam terhadap data campaign dan karakteristik pelanggan, kami menyarankan beberapa langkah strategis untuk meningkatkan efektivitas campaign dan memaksimalkan keuntungan bisnis:
+Berdasarkan hasil evaluasi model, AdaBoostClassifier dipilih sebagai model yang akan digunakan karena 3 hal, yaitu:
 
-1. **Segmentasi Pelanggan Berdasarkan Respons Campaign:**
-   - Melakukan segmentasi pelanggan berdasarkan respons campaign dapat membantu dalam menyesuaikan strategi pemasaran.
-   - Fokuskan upaya pada kelompok pelanggan yang telah menunjukkan respons positif, seperti tingkat pendidikan Graduation, PhD, dan Master, serta status pernikahan Single, Married, dan Divorced.
+1. Mempunyai CV Precision Score yang tinggi 87%
+2. FIT Rate yang masih di bawah 10% yakni 6.47%
 
-2. **Personalisasi Pesan dan Penawaran:**
-   - Personalisasi pesan dan penawaran campaign untuk setiap kelompok pelanggan yang telah diidentifikasi dapat meningkatkan keterlibatan.
-   - Berdasarkan karakteristik unik dari setiap kelompok, buatlah pesan yang relevan dan tawarkan insentif yang sesuai dengan preferensi mereka.
+### **Hyperparameter Tuning
 
-3. **Penargetan Tingkat Pendidikan Tinggi:**
-   - Tingkat pendidikan tinggi seperti Graduation, PhD, dan Master memiliki potensi besar untuk respons campaign.
-   - Fokuskan penawaran khusus, informasi produk, dan keuntungan tambahan pada kelompok ini untuk memaksimalkan partisipasi.
+**Hyperparameter Tuning - Precision**
 
-4. **Optimalkan Pengeluaran Pelanggan yang Merespon:**
-   - Pelanggan yang merespons campaign memiliki kecenderungan pengeluaran yang lebih tinggi pada berbagai kategori produk.
-   - Optimalisasi persediaan dan promosi pada produk-produk yang paling diminati oleh kelompok pelanggan ini dapat meningkatkan nilai transaksi.
+| Parameter Set      | Model                        | CV Precision       | Precision_Train    | Precision_Test     | Diff               | Diff (%)           |
+| ------------------ | ---------------------------- | ------------------ | ------------------ | ------------------ | ------------------ | ------------------ |
+| **param_56** | **AdaBoostClassifier** | **0.908271** | **0.918675** | **0.843316** | **0.075359** | **8.203003** |
+| param_55           | AdaBoostClassifier           | 0.903253           | 0.910859           | 0.831003           | 0.079856           | 8.767125           |
+| param_52           | AdaBoostClassifier           | 0.900182           | 0.912634           | 0.822355           | 0.090279           | 9.892101           |
 
-5. **Perkuat Campaign dengan Data Pembelian dan Channel:**
-   - Analisis menunjukkan bahwa pelanggan yang merespons campaign memiliki rata-rata pembelian yang lebih tinggi di berbagai saluran seperti catalog, web, dan toko fisik.
-   - Penguatan campaign dengan peningkatan ketersediaan produk melalui saluran ini dapat meningkatkan aksesibilitas produk bagi pelanggan.
+**Hyperparameter Tuning - Accuracy**
 
-6. **Monitoring Berkala dan Analisis Reaksi Pelanggan:**
-   - Memonitoring berkala terhadap respons pelanggan dan melakukan analisis lebih lanjut terhadap perubahan tren dan preferensi (Dashboard).
-   - Keterlibatan yang berkelanjutan dan penyesuaian cepat terhadap dinamika pasar dapat menjadi kunci kesuksesan jangka panjang.
+| Parameter Set      | Model                        | CV Accuracy        | Accuracy_Train     | Accuracy_Test      | Diff               | Diff (%)           |
+| ------------------ | ---------------------------- | ------------------ | ------------------ | ------------------ | ------------------ | ------------------ |
+| param_55           | AdaBoostClassifier           | 0.872244           | 0.910523           | 0.834862           | 0.075660           | 8.309532           |
+| **param_56** | **AdaBoostClassifier** | **0.871889** | **0.918397** | **0.850917** | **0.067479** | **7.347494** |
+| param_52           | AdaBoostClassifier           | 0.870808           | 0.912312           | 0.830275           | 0.082037           | 8.992193           |
 
-Dengan menerapkan strategi ini, diharapkan perusahaan dapat meraih keberhasilan yang lebih besar dalam campaign pemasaran, meningkatkan loyalitas pelanggan, dan mengoptimalkan hasil bisnis secara keseluruhan.
+**Feature Importance**
+![Feature Importance](images/feature-importance-adb.png)
+10 Feature dengan score tertinggi akan digunakan sebagai acuan dalam Business Recommendation dan Future Model.
+
+## Summary & Recommendation
+
+### **Business Simulation**
+
+Menggunakan asumsi cost/promosi adalah 3 USD dan revenue/promosi adalah 11 USD, berikut simulasinya untuk menghitung profit margin.
+
+|                | Sebelum Model | Sesudah Model |
+| -------------- | ------------: | ------------: |
+| Total Customer |          2240 |            60 |
+| Total Response |           334 |            32 |
+| Rate Accept    |        14.91% |        53.33% |
+| Total Cost     |          6720 |           180 |
+| Total Revenue  |          3674 |           352 |
+| Total Profit   |         -3046 |           172 |
+| Profit Margin  |       -82.91% |        48.86% |
+
+### **Business Insight & Recommendation**
+
+Berdasarkan hasil analisa, pelanggan dengan `segmentasi loyal` dan pelanggan dengan `level pendidikan graduation` adalah yang paling banyak proporsinya yakni **40% adalah pelanggan loyal** dan **53% adalah berpendidikan graduation**. Oleh sebab itu, 2 kategori ini menjadi target promosi dengan recency berkisar antara 32-46 hari dan customer lifespan 393-495 hari. Recency dan Customer Lifespan dihitung menggunakan *[confidence interval mean](https://www.investopedia.com/terms/c/confidenceinterval.asp)* (confidence level 95%).
+
+## Dependencies
+
+Daftar library yang digunakan [cek disini](requirements.txt)
