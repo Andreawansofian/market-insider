@@ -53,6 +53,43 @@ Merekomendasikan actionable business insight kepada tim Marketing dan Meningkatk
 
 ---
 
+## Exploratory Data Analysis 📊
+
+### **EDA**
+
+#### **Univariate Analysis**
+
+![Distribusi Feature Numerik](images/distribusi-numerik.png)
+Mayoritas data terdistribusi secara positif, teen home dan kid home terdistribusi bimodal, dan hanya tahun kelahiran (`Year_Birth`) yang terdistribusi negatif.
+
+![Proporsi Feature Kategori](images/countplot.png)
+Graduation dan Married adalah yang paling banyak diantara masing-masing kategori level pendidikan dan status perkawinan. Ada beberapa invalid values atau nilai yang tidak resmi, pada level pendidikan terdapat `2n Cycle` dan `Basic`, sedangkan pada status perkawinan ada `Alone`, `Absurd`, dan `YOLO`.
+
+![Annual Customer Registration](images/dt-customer.png)
+Grafik di atas menampilkan jumlah customer yang bergabung/pertama kali melakukan transaksi. Customer pertama melakukan transaksi di bulan Juli 2012, dan customer terakhir pada Juni 2014. Dengan kata lain, data ini mencakup sample dari customer yang melakukan transaksi 2 tahun sejak 2012.
+
+![Annual Customer Registration Based on Response](images/dt-customer-response.png)
+Sedikit berbeda dengan grafik sebelumnya, grafik di atas membagi 2 segmen customer berdasarkan mereka yang menerima response pada marketing campaign. Terlihat bahwa jumlah yang tidak menerima campaign (garis `merah`) selalu lebih banyak di setiap bulannya bahkan jumlahnya lebih dari 2x. Ini menyebabkan label atau target customer yang akan digunakan dalam modelling menjadi imbalance.
+
+#### **Multivariate Analysis**
+
+![Matrix Correlation](images/matrix-corr.png)
+Menampilkan korelasi (*correlation pearson*) positif antar feature. Feature yang terkait dengan kelompok produk seperti wine, daging, dll mempunyai korelasi yang kuat dengan satu kelompok sesamanya dan juga dengan kelompok channel pembelian atau promosi seperti toko, katalog, dan web. Ini menandakan bahwa ada keterkaitan antara promosi yang dilakukan pada channel tertentu dengan pembelian suatu produk. Sedangkan kelompok feature yang terkait dengan kepemilikan anak, mempunyai korelasi negatif yang cenderung lemah dengan berbagai feature dari kelompok produk, yang artinya kepemilikan anak mengurangi pembelian suatu produk.
+
+### **Business Insight**
+
+![Marketing Campaign](images/comparison-campaign-marketing.png)
+Lebih dari setengah dari responden yang memberikan response telah menerima setidaknya satu campaign (56.29%). Hal ini menunjukkan bahwa Campaign memainkan peran penting dalam meraih response positif dari customer. Terdapat potensi untuk meningkatkan kesuksesan campaign karena masih ada sekitar 43.71% responden yang memberikan Yes Responsee tanpa menerimaCampaign apa pun. Analisis lebih lanjut dapat dilakukan untuk memahami alasan di balik keputusan ini dan untuk memperbaiki strategi Campaign agar lebih menarik bagi customer.
+
+Pemahaman tentang keberhasilan Campaign tertentu dapat membantu bisnis mengidentifikasi strategi yang efektif dan jenis Campaign yang lebih disukai oleh pelanggan. Misalnya, campaign 2 (Cmp2) memiliki tingkat kesuksesan yang tinggi (66.67%), sehingga strategi dari campaign 2 dapat dijadikan acuan untuk strategi campaign di masa mendatang.
+
+Penting untuk melakukan segmentasi customer berdasarkan preferensi dan kebiasaan mereka terkait *acceptence* pada campaign. Dengan memahami kelompok pelanggan yang merespon campaign dengan baik dan kelompok yang tidak, untuk kedepannya dapat menyusun strategi yang lebih terarah dan personalisasi campaign sesuai dengan setiap segmen. Oleh sebab itu, faktor penting dari response campaign akan ditemukan pada model machine learning yang akan dibuat.
+
+![Recency, Income, Products Comparison Based on Response Campaign](images/barplot-eduation.png)
+Pelanggan yang memberikan respons terhadap campaign memiliki rata-rata pendapatan yang lebih tinggi daripada yang tidak, periode pembelian (*recency*) yang lebih rendah, dan jumlah anak yang lebih sedikit. Customer yang merespons campaign menunjukkan tingkat pengeluaran yang lebih tinggi untuk berbagai kategori produk seperti daging dan wine. Berdasarkan dari insight tersebut, bisa disimpulkan bahwa mereka yang menerima campaign biasanya mempunyai pendapatan yang lebih tinggi, periode pembelian terakhir yang lebih cepat/rendah, mempunyai anak lebih sedikit, dan jumlah pembelian yang lebih banyak. Perlu analisa lebih lanjut dengan melakukan pemodelan machine learning, apakah faktor-faktor tersebut mempunyai kontribusi yang tinggi pada promosi. Dan perlu melakukan kalkulasi statistik, untuk memberikan rentang nilai rata-rata yang lebih baik misalnya menggunakan ***confidence mean interval***.
+
+---
+
 ## Data Preprocessing 🛠️
 
 ### **Data Cleansing:**
@@ -69,6 +106,19 @@ Merekomendasikan actionable business insight kepada tim Marketing dan Meningkatk
 3. Feature Transformation: 11 Feature Normalisasi (min-max scaler), 19 Feature Standarisasi (PowerTransformers) - Berdasarkan Nilai Kemiringan (Skew)
 4. Feature Selection: ANOVA dan Chi-Square, VIF (Redundancy Feature)
 5. Imbalance Handling: SMOTE, oversampling class 1 (1397:251 | 1397:1397)
+
+![RFM Category Proportions](images/rfm-proportions.png)
+RFM Cat merupakan salah feature baru yang diekstrak dari beberapa feature seperti recency, frequency (total transaksi di kelompok feature channel pembelian), dan monetary (total spending di kelompok feature produk). Membagi menjadi 4 segmentasi customer, yang di kalkulasi menggunakan nilai dari quartile masing-masing feature pembentuk. New customer adalah customer dengan recency pembelian paling lama, total frekuensi transaksi terendah, dan jumlah spending terendah, sedangkan lainnya ada at risk customer, loyal customer, dan tertinggi adalah champions.
+
+![ANOVA Stats - Feature Selection](images/anova-selection.png)
+
+Terdapat 28 feature dari 33 feature yang lolos uji anova dengan confidence level di 95%. Uji Anova digunakan untuk melihat apakah ada perbedaan signifikan antara feature yang mempengaruhi (independent features) dengan feature yang dipengaruhi / target (dependent feature), dimana feature dependent adalah numerik dan target adalah kategori..
+
+![Chi Square - Feature Selection](images/chi2-selection.png)
+
+Terdapat 3 feature dari 5 feature yang lolos uji Chi Square dengan confidence level di 95%. Uji Chi Square digunakan untuk melihat apakah ada perbedaan signifikan antara feature yang mempengaruhi (independent features) dengan feature yang dipengaruhi / target (dependent feature), dimana feature dependent adalah kategori dan target adalah kategori.
+
+Setelah melalui tahapan 2 uji statistik, selanjutnya melakukan redundacy analysis. Redundacy Analysis digunakan untuk mengoptimalkan kinerja pemodelan, mereduksi feature-feature yang mempunyai kemiripan atau saling berkorelasi satu sama lain (multicolinearity). Metode yang digunakan adalah `VIF Score`, metode ini biasanya digunakan dalam pemodelan regresi dan tidak lazim pada kasus klasifikasi, namun pada kasus klasifikasi ini masih applicable karena hubungan feature dan target linear. Apabila menggunakan algoritma model ensemble, sebenarnya tidak perlu melakukan redudancy analysis, karena akan otomatis terseleksi. Namun untuk mengoptimalkan resource dan mempercepat kinerja pemodelan sebaiknya feature yang digunakan tidak terlalu banyak, oleh sebab itu hal ini sangat direkomendasikan.
 
 ---
 
@@ -92,7 +142,7 @@ Merekomendasikan actionable business insight kepada tim Marketing dan Meningkatk
 | XGBClassifier                | 0.840023           | 0.864710           | 0.807339           | 0.057371           | 6.634668           |
 | **AdaBoostClassifier** | **0.861142** | **0.879742** | **0.816514** | **0.063229** | **7.187166** |
 
-Berdasarkan hasil evaluasi model, model adaboost akan digunakan sebagai model yang akan digunakan karena mempunyai CV Precision Score yang tinggi 87% dan FIT Rate yang masih di bawah 10% yakni 6.47%.
+Berdasarkan hasil evaluasi model, model adaboost akan digunakan sebagai model pada production karena mempunyai CV Precision Score yang tinggi 87% dan FIT Rate yang masih di bawah 10% yakni 6.47%.
 
 ### **Hyperparameter Tuning**
 
