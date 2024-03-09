@@ -20,36 +20,19 @@
 
 ## Business Understanding 🎯
 
-### **Problem Statements :**
-
-Sebuah perusahaan melaksanakan kampanye pemasaran, dimana kampanye pemasaran terakhirnya hanya berhasil meraih respons sebesar 14.91% dari 2240 pelanggan.
-
-### **Objective:**
-
-Membuat model prediktif untuk memprediksi response pelanggan
-
-### **Business Metrics:**
-
-Response Rate (Primary Metrics), Profit Margin (Secondary Metrics)
-
-### **Goals:**
-
-Merekomendasikan actionable business insight kepada tim Marketing dan Meningkatkan Response Rate dan Profit Margin dari marketing campaign
+![Business Understanding](images/business-understanding.png)
 
 ---
 
 ## Data Understanding 📋
 
-### **Data Overview**
+![Data Overview](images/data-overview.png)
 
-- Dimensi Data: `2240 baris, 29 kolom`
-- Tipe Data: `26 Numerik, 3 Kategori`
-- Missing Values: `1.07%`
-- Duplicates: `8.12%`
-- Outliers: `Year_Birth` dan `Income`
-- Invalid Values: `Marital_Status` dan `Education`
-- Invalid Tipe Data: `Dt_Customer`
-- All Unique Values: `ID`, `Z_CostContact`, `Z_Revenue`
+![Outliers](images/outliers-values.png)
+Angka tahun kelahiran 1893 jika konversi ke usia pada tahun 2014, didapatkan berusia 120 tahun, sedangkan outliers pada penghasilan kemungkinan terjadi karena kesalahan input.
+
+![Proporsi Feature Kategori](images/countplot.png)
+Graduation dan Married adalah yang paling banyak diantara masing-masing kategori level pendidikan dan status perkawinan. Ada beberapa invalid values atau nilai yang tidak resmi, pada level pendidikan terdapat `2n Cycle` dan `Basic`, sedangkan pada status perkawinan ada `Alone`, `Absurd`, dan `YOLO`.
 
 ---
 
@@ -62,14 +45,13 @@ Merekomendasikan actionable business insight kepada tim Marketing dan Meningkatk
 ![Distribusi Feature Numerik](images/distribusi-numerik.png)
 Mayoritas data terdistribusi secara positif, teen home dan kid home terdistribusi bimodal, dan hanya tahun kelahiran (`Year_Birth`) yang terdistribusi negatif.
 
-![Proporsi Feature Kategori](images/countplot.png)
-Graduation dan Married adalah yang paling banyak diantara masing-masing kategori level pendidikan dan status perkawinan. Ada beberapa invalid values atau nilai yang tidak resmi, pada level pendidikan terdapat `2n Cycle` dan `Basic`, sedangkan pada status perkawinan ada `Alone`, `Absurd`, dan `YOLO`.
-
-![Annual Customer Registration](images/dt-customer.png)
-Grafik di atas menampilkan jumlah customer yang bergabung/pertama kali melakukan transaksi. Customer pertama melakukan transaksi di bulan Juli 2012, dan customer terakhir pada Juni 2014. Dengan kata lain, data ini mencakup sample dari customer yang melakukan transaksi 2 tahun sejak 2012.
+![Annual Customer Registration](images/percentage-response-categorical.png)
+Tingkat pendidikan selaras dengan tingkat response pada marketing campaign, semakin tinggi tingkat pendidikan maka semakin tinggi juga persentase responsenya. Sedangkan customer yang statusnya single mempunyai persentase response yang lebih tinggi dibandingkan dengan yang berpasangan seperti married.
 
 ![Annual Customer Registration Based on Response](images/dt-customer-response.png)
-Sedikit berbeda dengan grafik sebelumnya, grafik di atas membagi 2 segmen customer berdasarkan mereka yang menerima response pada marketing campaign. Terlihat bahwa jumlah yang tidak menerima campaign (garis `merah`) selalu lebih banyak di setiap bulannya bahkan jumlahnya lebih dari 2x. Ini menyebabkan label atau target customer yang akan digunakan dalam modelling menjadi imbalance.
+Grafik di atas menampilkan jumlah customer yang bergabung/pertama kali melakukan transaksi. Customer pertama melakukan transaksi di bulan Juli 2012, dan customer terakhir pada Juni 2014. Dengan kata lain, data ini mencakup sample dari customer yang melakukan transaksi 2 tahun sejak 2012.
+
+Grafik membagi 2 segmen customer berdasarkan mereka yang menerima response dan tidak pada marketing campaign. Terlihat bahwa jumlah yang tidak menerima campaign (garis `merah`) selalu lebih banyak di setiap bulannya bahkan jumlahnya lebih dari 2x. Ini menyebabkan label atau target customer yang akan digunakan dalam modelling menjadi imbalance.
 
 #### **Multivariate Analysis**
 
@@ -99,6 +81,8 @@ Pelanggan yang memberikan respons terhadap campaign memiliki rata-rata pendapata
 3. Handling Outliers: Drop Outliers (Z-Score)
 4. Handling Invalid Values: Replace values
 
+![Data Cleansing Process](images/data-cleansing.png)
+
 ### **Feature Engineering:**
 
 1. Feature Extraction: RFM Cat, Customer Lifespan, Total Purchase, Total Spending, Total Offers, dll
@@ -107,22 +91,45 @@ Pelanggan yang memberikan respons terhadap campaign memiliki rata-rata pendapata
 4. Feature Selection: ANOVA dan Chi-Square, VIF (Redundancy Feature)
 5. Imbalance Handling: SMOTE, oversampling class 1 (1397:251 | 1397:1397)
 
-![RFM Category Proportions](images/rfm-proportions.png)
+**Feature Extraction - Feature Encoding**
+
 RFM Cat merupakan salah feature baru yang diekstrak dari beberapa feature seperti recency, frequency (total transaksi di kelompok feature channel pembelian), dan monetary (total spending di kelompok feature produk). Membagi menjadi 4 segmentasi customer, yang di kalkulasi menggunakan nilai dari quartile masing-masing feature pembentuk. New customer adalah customer dengan recency pembelian paling lama, total frekuensi transaksi terendah, dan jumlah spending terendah, sedangkan lainnya ada at risk customer, loyal customer, dan tertinggi adalah champions.
+
+![RFM Category Proportions](images/feature-extraction-encoding.png)
+
+**Feature Transformation**
+
+Normalisasi bertujuan untuk mengubah nilai-nilai dalam dataset sehingga mereka memiliki skala yang seragam. Ini membantu menghindari bias dari fitur-fitur dengan rentang nilai yang sangat berbeda. Biasanya dilakukan dengan mengubah nilai-nilai ke dalam rentang antara 0 dan 1, namun bisa juga dilakukan dalam rentang lain seperti -1 hingga 1.
+
+Transformasi Yeo-Johnson bertujuan untuk mengubah distribusi data agar lebih simetris dan mendekati distribusi normal. Ini berguna saat data memiliki skewness atau kurtosis yang signifikan. Metode ini menggunakan parameter lambda (λ) untuk mengontrol transformasi data. Nilai lambda dapat diestimasi secara otomatis berdasarkan data atau dapat ditentukan secara manual.
+
+![Feature Transformation](images/feature-transformation.png)
+
+**Feature Selection**
+
+Terdapat 28 feature dari 33 feature yang lolos uji anova dengan confidence level di 95%. Uji Anova digunakan untuk melihat apakah ada perbedaan signifikan antara feature yang mempengaruhi (independent features) dengan feature yang dipengaruhi / target (dependent feature), dimana feature independent adalah numerik dan target adalah kategori.
 
 ![ANOVA Stats - Feature Selection](images/anova-selection.png)
 
-Terdapat 28 feature dari 33 feature yang lolos uji anova dengan confidence level di 95%. Uji Anova digunakan untuk melihat apakah ada perbedaan signifikan antara feature yang mempengaruhi (independent features) dengan feature yang dipengaruhi / target (dependent feature), dimana feature dependent adalah numerik dan target adalah kategori..
+Terdapat 3 feature dari 5 feature yang lolos uji Chi Square dengan confidence level di 95%. Uji Chi Square digunakan untuk melihat apakah ada perbedaan signifikan antara feature yang mempengaruhi (independent features) dengan feature yang dipengaruhi / target (dependent feature), dimana feature independent adalah kategori dan target adalah kategori.
 
 ![Chi Square - Feature Selection](images/chi2-selection.png)
 
-Terdapat 3 feature dari 5 feature yang lolos uji Chi Square dengan confidence level di 95%. Uji Chi Square digunakan untuk melihat apakah ada perbedaan signifikan antara feature yang mempengaruhi (independent features) dengan feature yang dipengaruhi / target (dependent feature), dimana feature dependent adalah kategori dan target adalah kategori.
+Setelah melalui tahapan 2 uji statistik, selanjutnya melakukan redundacy analysis. Redundacy Analysis digunakan untuk mengoptimalkan kinerja pemodelan, mereduksi feature-feature yang mempunyai kemiripan atau saling berkorelasi satu sama lain (multicolinearity). Metode yang digunakan adalah `VIF Score`, metode ini biasanya digunakan dalam pemodelan regresi dan tidak lazim pada kasus klasifikasi, namun pada kasus klasifikasi ini masih applicable karena hubungan feature dan target linear. Apabila menggunakan algoritma model ensemble, sebenarnya tidak perlu melakukan redundancy analysis, karena akan otomatis terseleksi. Namun untuk mengoptimalkan resource dan mempercepat kinerja pemodelan sebaiknya feature yang digunakan tidak terlalu banyak, oleh sebab itu hal ini sangat direkomendasikan.
 
-Setelah melalui tahapan 2 uji statistik, selanjutnya melakukan redundacy analysis. Redundacy Analysis digunakan untuk mengoptimalkan kinerja pemodelan, mereduksi feature-feature yang mempunyai kemiripan atau saling berkorelasi satu sama lain (multicolinearity). Metode yang digunakan adalah `VIF Score`, metode ini biasanya digunakan dalam pemodelan regresi dan tidak lazim pada kasus klasifikasi, namun pada kasus klasifikasi ini masih applicable karena hubungan feature dan target linear. Apabila menggunakan algoritma model ensemble, sebenarnya tidak perlu melakukan redudancy analysis, karena akan otomatis terseleksi. Namun untuk mengoptimalkan resource dan mempercepat kinerja pemodelan sebaiknya feature yang digunakan tidak terlalu banyak, oleh sebab itu hal ini sangat direkomendasikan.
+![Feature Selection Process](images/feature-selection-process.png)
+
+**Feature Imbalance**
+
+Adanya ketidakseimbangan dalam data respons, dimana kelas 1 memiliki sampel yang jauh lebih sedikit dari kelas 0. Untuk menyeimbangkan ini, menggunakan metode SMOTE dari library imblearn. SMOTE membantu membuat sampel sintetis dalam kelas minoritas, memperbaiki ketidakseimbangan dan meningkatkan kualitas model.
+
+![Imbalance](images/feature-imbalance.png)
 
 ---
 
 ## Modelling & Evaluation 🤖
+
+![Model Evaluation](images/metrics-modelling.png)
 
 ### **Default Parameter**
 
@@ -162,6 +169,10 @@ Berdasarkan hasil evaluasi model, model adaboost akan digunakan sebagai model pa
 | **param_56** | **AdaBoostClassifier** | **0.871889** | **0.918397** | **0.850917** | **0.067479** | **7.347494** |
 | param_52           | AdaBoostClassifier           | 0.870808           | 0.912312           | 0.830275           | 0.082037           | 8.992193           |
 
+**Param_56** dipilih sebagai parameter yang digunakan pada hyperparameter tuning model adaboost. Parameter ini meningkatkan score sebelumnya 87% menjadi 90%, dengan tetap menjaga FIT rate di bawah 10%.
+
+![Model Evaluation](images/evaluation-models.png)
+
 ![Feature Importance](images/feature-importance-adb.png)
 
 ---
@@ -170,7 +181,9 @@ Berdasarkan hasil evaluasi model, model adaboost akan digunakan sebagai model pa
 
 ### **Business Simulation**
 
-Menggunakan asumsi cost/promosi adalah **3 USD** dan revenue/promosi adalah **11 USD**, berikut simulasinya untuk menghitung profit margin.
+Menggunakan asumsi cost/promosi adalah **3 USD** dan revenue/promosi adalah **11 USD**, berikut simulasinya untuk menghitung respose rate dan profit margin.
+
+![Model Evaluation](images/business-simulation.png)
 
 |                | Sebelum Model | Sesudah Model |
 | -------------- | ------------: | ------------: |
@@ -185,6 +198,10 @@ Menggunakan asumsi cost/promosi adalah **3 USD** dan revenue/promosi adalah **11
 ### **Business Insight & Recommendation**
 
 Berdasarkan hasil analisa, pelanggan dengan segmentasi loyal dan pelanggan dengan level pendidikan graduation adalah yang paling banyak proporsinya yakni **40% adalah pelanggan loyal** dan **53% adalah berpendidikan graduation**. Oleh sebab itu, 2 kategori ini menjadi target promosi dengan recency berkisar antara 32-46 hari dan customer lifespan 393-495 hari. Recency dan Customer Lifespan dihitung menggunakan *[confidence interval mean](https://www.investopedia.com/terms/c/confidenceinterval.asp)* (confidence level 95%).
+
+![Customer Profile Marketing Campaign](images/business-recommendation.png)
+
+![Business Recommendation](images/business-recommendation-products.png)
 
 ## Dependencies
 
