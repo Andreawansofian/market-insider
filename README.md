@@ -1,114 +1,208 @@
-### **Summary Descriptive Statistics**
+# Marketing Campaign Analysis
 
-1. **Kolom dengan Tipe Data Tidak Sesuai:**
+## Presented By:
 
-   - Kolom `Dt_Customer` merupakan tanggal registrasi pelanggan dengan tipe data object. Perlu diubah menjadi tipe Date Time.
+### The Best Group of Final Project 🏆 | [Certificate of Awardee](images/awardee.png)
 
-2. **Kolom dengan Nilai Kosong:**
+<p align="center">
+  <img src="images\team.png" alt="Team">
+</p>
 
-   - Kolom `Income` memiliki nilai kosong pada 2216 baris.
+## Table of Contents
 
-3. **Kolom dengan Summary Aneh:**
+- [Business Understanding](#business-understanding)
+- [Data Understanding](#data-understanding)
+- [Data Preprocessing](#data-preprocessing)
+- [Modelling and Evaluation](#modelling--evaluation)
+- [Summary and Recommendation](#summary--recommendation)
 
-   - Kolom `ID` memiliki jumlah nilai unik yang sama dengan jumlah baris dataset (2240), sehingga tidak memungkinkan untuk mengamati riwayat perjalanan pelanggan.
-   - Kolom `Z_CostContact` dan `Z_Revenue` hanya memiliki satu data unik.
-   - Kolom `Dt_Customer` menunjukkan keanehan dengan pelanggan terakhir melakukan registrasi pada 29 Juni 2014. Terdapat juga keanehan pada `Year Birth` dengan tahun lahir tertua adalah 1893.
-   - Kolom `Income` memiliki nilai maksimum mencapai ratusan ribu (666,666), sedangkan nilai ukuran pemusatan dan penyebarannya hanya mencapai puluhan ribu, diduga sebagai outlier.
-   - Beberapa kolom seperti `MntFishProducts`, `MntFruits`, `MntGoldProds`, `MntMeatProducts`, `MntSweetProducts`, `MntWines` memiliki nilai maksimum yang jauh dari ukuran pemusatan atau penyebaran lainnya, menunjukkan adanya outlier.
-   - Kolom `Marital Status` memiliki 8 nilai unik.
+---
 
-### **Summary EDA**
+## Business Understanding 🎯
 
-1. **Berdasarkan KDE Plot:**
+![Business Understanding](images/business-understanding.png)
 
-   - **Normal Distribution:**
-     - `Recency` memiliki distribusi yang mirip dengan distribusi normal.
-   - **Left-Skewed Distribution:**
-     - `Year_Birth` menunjukkan kecondongan ke kiri dengan median yang lebih tinggi daripada mean.
-   - **Right-Skewed Distribution:**
-     - `Income` dan beberapa features terkait pembelian produk menunjukkan kecondongan ke kanan, dengan mean yang lebih tinggi daripada median.
-   - **Bimodal Distribution:**
-     - `Kidhome` dan `Teenhome` menunjukkan dua puncak dalam distribusinya.
-   - **Binary Dominated Distribution:**
-     - Beberapa features campaign (`AcceptedCmp1`, `AcceptedCmp2`, `AcceptedCmp3`, `AcceptedCmp4`, `AcceptedCmp5`, dan `Responsee`) didominasi oleh nilai 0.
+---
 
-2. **Berdasarkan Box Plot:**
+## Data Understanding 📋
 
-   - `Year_Birth` dan `Income` memiliki outlier yang perlu dicermati lebih lanjut.
-   - Beberapa features terkait pembelian produk dan aktivitas pembelian memiliki banyak nilai outlier pada nilai tinggi, menunjukkan variasi yang signifikan dalam pola pembelian atau aktivitas pelanggan.
+![Data Overview](images/data-overview.png)
 
-3. **Berdasarkan Count Plot (Categorical Feature):**
+![Outliers](images/outliers-values.png)
+Angka tahun kelahiran 1893 jika konversi ke usia pada tahun 2014, didapatkan berusia 120 tahun, sedangkan outliers pada penghasilan kemungkinan terjadi karena kesalahan input.
 
-   - **Level Pendidikan:**
-     - Mayoritas pelanggan memiliki tingkat pendidikan "Graduation," menunjukkan target pasar utama.
-   - **Status Perkawinan:**
-     - Mayoritas pelanggan memiliki status perkawinan "Married," menunjukkan dominasi pasangan dalam populasi pelanggan.
+![Proporsi Feature Kategori](images/countplot.png)
+Graduation dan Married adalah yang paling banyak diantara masing-masing kategori level pendidikan dan status perkawinan. Ada beberapa invalid values atau nilai yang tidak resmi, pada level pendidikan terdapat `2n Cycle` dan `Basic`, sedangkan pada status perkawinan ada `Alone`, `Absurd`, dan `YOLO`.
 
-4. **Berdasarkan Lineplot (Datetime Feature):**
+---
 
-   - Terdapat fluktuasi dalam pendaftaran pelanggan selama periode Juli-2012 hingga Juni-2014.
-   - Puncak pendaftaran terjadi pada bulan Agustus-2012 dan Oktober-2013.
-   - Tren menunjukkan jumlah pendaftaran yang lebih rendah pada awal dan akhir periode, menunjukkan potensi pola musiman atau faktor lain yang memengaruhi pendaftaran pelanggan.
+## Exploratory Data Analysis 📊
 
-5. **Berdasarkan Regression Plot (Numerical Feature vs Target):**
+### **EDA**
 
-   - Beberapa faktor seperti pendapatan, jumlah anak, recency, dan tahun kelahiran pelanggan memiliki korelasi yang kuat terhadap kemungkinan pelanggan merespon.
-   - Spending pada produk tertentu, terutama `MeatProducts`, juga memiliki korelasi positif yang signifikan dengan `Response`.
-   - Jenis pembelian melalui Katalog dan Web memberikan kontribusi positif yang signifikan terhadap kemungkinan pelanggan merespon, sementara pembelian dengan diskon atau melalui toko fisik tidak menunjukkan korelasi yang signifikan.
-   - Campaign (`AcceptedCmp1`, `AcceptedCmp2`, `AcceptedCmp3`, `AcceptedCmp4`, `AcceptedCmp5`) juga memiliki korelasi positif yang signifikan terhadap `Response`.
+#### **Univariate Analysis**
 
-6. **Berdasarkan Lineplot (Datetime Feature vs Target):**
+![Distribusi Feature Numerik](images/distribusi-numerik.png)
+Mayoritas data terdistribusi secara positif, teen home dan kid home terdistribusi bimodal, dan hanya tahun kelahiran (`Year_Birth`) yang terdistribusi negatif.
 
-   - Pada rentang waktu Juli 2012 hingga Juni 2014, lebih banyak pelanggan yang mendaftar namun tidak merespon campaign.
-   - Puncak pendaftaran dan respon terjadi pada Agustus 2012 - September 2012, namun jumlahnya cenderung menurun hingga akhir periode.
-   - Analisis ini memberikan gambaran tentang dinamika pendaftaran dan respon campaign selama periode tersebut, yang dapat menjadi dasar untuk strategi pemasaran yang lebih efektif di masa depan.
+![Annual Customer Registration](images/percentage-response-categorical.png)
+Tingkat pendidikan selaras dengan tingkat response pada marketing campaign, semakin tinggi tingkat pendidikan maka semakin tinggi juga persentase responsenya. Sedangkan customer yang statusnya single mempunyai persentase response yang lebih tinggi dibandingkan dengan yang berpasangan seperti married.
 
-7. **Berdasarkan Stacked Bar (Categorical Feature (normalize) vs Target):**
+![Annual Customer Registration Based on Response](images/dt-customer-response.png)
+Grafik di atas menampilkan jumlah customer yang bergabung/pertama kali melakukan transaksi. Customer pertama melakukan transaksi di bulan Juli 2012, dan customer terakhir pada Juni 2014. Dengan kata lain, data ini mencakup sample dari customer yang melakukan transaksi 2 tahun sejak 2012.
 
-   - **Insight Response Campaign Berdasarkan Tingkat Pendidikan:**
-     - Tingkat Response Tinggi pada Tingkat Pendidikan Tinggi: PhD (20.78%), Master (15.41%), dan Graduation (13.48%).
-     - Varian Response pada Tingkat Pendidikan Rendah, dengan Basic (3.70%) lebih rendah dibandingkan dengan 2n Cycle (10.84%) dan Graduation (13.49%).
-     - Pentingnya Pendidikan dalam Pengaruh Response.
+Grafik membagi 2 segmen customer berdasarkan mereka yang menerima response dan tidak pada marketing campaign. Terlihat bahwa jumlah yang tidak menerima campaign (garis `merah`) selalu lebih banyak di setiap bulannya bahkan jumlahnya lebih dari 2x. Ini menyebabkan label atau target customer yang akan digunakan dalam modelling menjadi imbalance.
 
-   - **Insight Response Campaign Berdasarkan Status Perkawinan:**
-     - Perbedaan Signifikan pada Tingkat Response: "Married" memiliki tingkat Response yang lebih rendah (11.34%) dibandingkan dengan "Divorced" (20.69%), "Single" (22.08%), dan "Together" (10.35%).
-     - Tingkat Response Tinggi pada Status Perkawinan "Single" dan "Divorced" (22.08% dan 20.69%).
-     - Pentingnya Personalisasi Campaign untuk Setiap Status Perkawinan.
+#### **Multivariate Analysis**
 
-8. **Berdasarkan Korelasi Koefisien (Heatmap):**
+![Matrix Correlation](images/matrix-corr.png)
+Menampilkan korelasi (*correlation pearson*) positif antar feature. Feature yang terkait dengan kelompok produk seperti wine, daging, dll mempunyai korelasi yang kuat dengan satu kelompok sesamanya dan juga dengan kelompok channel pembelian atau promosi seperti toko, katalog, dan web. Ini menandakan bahwa ada keterkaitan antara promosi yang dilakukan pada channel tertentu dengan pembelian suatu produk. Sedangkan kelompok feature yang terkait dengan kepemilikan anak, mempunyai korelasi negatif yang cenderung lemah dengan berbagai feature dari kelompok produk, yang artinya kepemilikan anak mengurangi pembelian suatu produk.
 
-   - **Pentingnya Korelasi Antara Feature:**
-     - Korelasi Positif terhadap Target pada campaign, produk spending, dan channel penjualan.
-     - Korelasi Negatif terhadap Target hanya pada Recency dan jumlah anak.
-     - Korelasi Tinggi Antara Beberapa Pasang Feature, menunjukkan adanya multicollinearity.
-     - Rekomendasi untuk Proses Modeling.
+### **Business Insight**
 
-### **Summary Business Insights**
+![Marketing Campaign](images/comparison-campaign-marketing.png)
+Lebih dari setengah dari responden yang memberikan response telah menerima setidaknya satu campaign (56.29%). Hal ini menunjukkan bahwa Campaign memainkan peran penting dalam meraih response positif dari customer. Terdapat potensi untuk meningkatkan kesuksesan campaign karena masih ada sekitar 43.71% responden yang memberikan Yes Responsee tanpa menerimaCampaign apa pun. Analisis lebih lanjut dapat dilakukan untuk memahami alasan di balik keputusan ini dan untuk memperbaiki strategi Campaign agar lebih menarik bagi customer.
 
-Berdasarkan analisis mendalam terhadap data campaign dan karakteristik pelanggan, kami menyarankan beberapa langkah strategis untuk meningkatkan efektivitas campaign dan memaksimalkan keuntungan bisnis:
+Pemahaman tentang keberhasilan Campaign tertentu dapat membantu bisnis mengidentifikasi strategi yang efektif dan jenis Campaign yang lebih disukai oleh pelanggan. Misalnya, campaign 2 (Cmp2) memiliki tingkat kesuksesan yang tinggi (66.67%), sehingga strategi dari campaign 2 dapat dijadikan acuan untuk strategi campaign di masa mendatang.
 
-1. **Segmentasi Pelanggan Berdasarkan Respons Campaign:**
-   - Melakukan segmentasi pelanggan berdasarkan respons campaign dapat membantu dalam menyesuaikan strategi pemasaran.
-   - Fokuskan upaya pada kelompok pelanggan yang telah menunjukkan respons positif, seperti tingkat pendidikan Graduation, PhD, dan Master, serta status pernikahan Single, Married, dan Divorced.
+Penting untuk melakukan segmentasi customer berdasarkan preferensi dan kebiasaan mereka terkait *acceptence* pada campaign. Dengan memahami kelompok pelanggan yang merespon campaign dengan baik dan kelompok yang tidak, untuk kedepannya dapat menyusun strategi yang lebih terarah dan personalisasi campaign sesuai dengan setiap segmen. Oleh sebab itu, faktor penting dari response campaign akan ditemukan pada model machine learning yang akan dibuat.
 
-2. **Personalisasi Pesan dan Penawaran:**
-   - Personalisasi pesan dan penawaran campaign untuk setiap kelompok pelanggan yang telah diidentifikasi dapat meningkatkan keterlibatan.
-   - Berdasarkan karakteristik unik dari setiap kelompok, buatlah pesan yang relevan dan tawarkan insentif yang sesuai dengan preferensi mereka.
+![Recency, Income, Products Comparison Based on Response Campaign](images/barplot-eduation.png)
+Pelanggan yang memberikan respons terhadap campaign memiliki rata-rata pendapatan yang lebih tinggi daripada yang tidak, periode pembelian (*recency*) yang lebih rendah, dan jumlah anak yang lebih sedikit. Customer yang merespons campaign menunjukkan tingkat pengeluaran yang lebih tinggi untuk berbagai kategori produk seperti daging dan wine. Berdasarkan dari insight tersebut, bisa disimpulkan bahwa mereka yang menerima campaign biasanya mempunyai pendapatan yang lebih tinggi, periode pembelian terakhir yang lebih cepat/rendah, mempunyai anak lebih sedikit, dan jumlah pembelian yang lebih banyak. Perlu analisa lebih lanjut dengan melakukan pemodelan machine learning, apakah faktor-faktor tersebut mempunyai kontribusi yang tinggi pada promosi. Dan perlu melakukan kalkulasi statistik, untuk memberikan rentang nilai rata-rata yang lebih baik misalnya menggunakan ***confidence mean interval***.
 
-3. **Penargetan Tingkat Pendidikan Tinggi:**
-   - Tingkat pendidikan tinggi seperti Graduation, PhD, dan Master memiliki potensi besar untuk respons campaign.
-   - Fokuskan penawaran khusus, informasi produk, dan keuntungan tambahan pada kelompok ini untuk memaksimalkan partisipasi.
+---
 
-4. **Optimalkan Pengeluaran Pelanggan yang Merespon:**
-   - Pelanggan yang merespons campaign memiliki kecenderungan pengeluaran yang lebih tinggi pada berbagai kategori produk.
-   - Optimalisasi persediaan dan promosi pada produk-produk yang paling diminati oleh kelompok pelanggan ini dapat meningkatkan nilai transaksi.
+## Data Preprocessing 🛠️
 
-5. **Perkuat Campaign dengan Data Pembelian dan Channel:**
-   - Analisis menunjukkan bahwa pelanggan yang merespons campaign memiliki rata-rata pembelian yang lebih tinggi di berbagai saluran seperti catalog, web, dan toko fisik.
-   - Penguatan campaign dengan peningkatan ketersediaan produk melalui saluran ini dapat meningkatkan aksesibilitas produk bagi pelanggan.
+### **Data Cleansing:**
 
-6. **Monitoring Berkala dan Analisis Reaksi Pelanggan:**
-   - Memonitoring berkala terhadap respons pelanggan dan melakukan analisis lebih lanjut terhadap perubahan tren dan preferensi (Dashboard).
-   - Keterlibatan yang berkelanjutan dan penyesuaian cepat terhadap dinamika pasar dapat menjadi kunci kesuksesan jangka panjang.
+1. Handling Missing Values: Drop missing values
+2. Handling Duplicates: Drop Duplicates
+3. Handling Outliers: Drop Outliers (Z-Score)
+4. Handling Invalid Values: Replace values
 
-Dengan menerapkan strategi ini, diharapkan perusahaan dapat meraih keberhasilan yang lebih besar dalam campaign pemasaran, meningkatkan loyalitas pelanggan, dan mengoptimalkan hasil bisnis secara keseluruhan.
+![Data Cleansing Process](images/data-cleansing.png)
+
+### **Feature Engineering:**
+
+1. Feature Extraction: RFM Cat, Customer Lifespan, Total Purchase, Total Spending, Total Offers, dll
+2. Feature Encoding: Ordinal Encoding (Education, Marital Status), Label Encoding (RFM Cat, Relationship Status, Primary Needs)
+3. Feature Transformation: 11 Feature Normalisasi (min-max scaler), 19 Feature Standarisasi (PowerTransformers) - Berdasarkan Nilai Kemiringan (Skew)
+4. Feature Selection: ANOVA dan Chi-Square, VIF (Redundancy Feature)
+5. Imbalance Handling: SMOTE, oversampling class 1 (1397:251 | 1397:1397)
+
+**Feature Extraction - Feature Encoding**
+
+RFM Cat merupakan salah feature baru yang diekstrak dari beberapa feature seperti recency, frequency (total transaksi di kelompok feature channel pembelian), dan monetary (total spending di kelompok feature produk). Membagi menjadi 4 segmentasi customer, yang di kalkulasi menggunakan nilai dari quartile masing-masing feature pembentuk. New customer adalah customer dengan recency pembelian paling lama, total frekuensi transaksi terendah, dan jumlah spending terendah, sedangkan lainnya ada at risk customer, loyal customer, dan tertinggi adalah champions.
+
+![RFM Category Proportions](images/feature-extraction-encoding.png)
+
+**Feature Transformation**
+
+Normalisasi bertujuan untuk mengubah nilai-nilai dalam dataset sehingga mereka memiliki skala yang seragam. Ini membantu menghindari bias dari fitur-fitur dengan rentang nilai yang sangat berbeda. Biasanya dilakukan dengan mengubah nilai-nilai ke dalam rentang antara 0 dan 1, namun bisa juga dilakukan dalam rentang lain seperti -1 hingga 1.
+
+Transformasi Yeo-Johnson bertujuan untuk mengubah distribusi data agar lebih simetris dan mendekati distribusi normal. Ini berguna saat data memiliki skewness atau kurtosis yang signifikan. Metode ini menggunakan parameter lambda (λ) untuk mengontrol transformasi data. Nilai lambda dapat diestimasi secara otomatis berdasarkan data atau dapat ditentukan secara manual.
+
+![Feature Transformation](images/feature-transformation.png)
+
+**Feature Selection**
+
+Terdapat 28 feature dari 33 feature yang lolos uji anova dengan confidence level di 95%. Uji Anova digunakan untuk melihat apakah ada perbedaan signifikan antara feature yang mempengaruhi (independent features) dengan feature yang dipengaruhi / target (dependent feature), dimana feature independent adalah numerik dan target adalah kategori.
+
+![ANOVA Stats - Feature Selection](images/anova-selection.png)
+
+Terdapat 3 feature dari 5 feature yang lolos uji Chi Square dengan confidence level di 95%. Uji Chi Square digunakan untuk melihat apakah ada perbedaan signifikan antara feature yang mempengaruhi (independent features) dengan feature yang dipengaruhi / target (dependent feature), dimana feature independent adalah kategori dan target adalah kategori.
+
+![Chi Square - Feature Selection](images/chi2-selection.png)
+
+Setelah melalui tahapan 2 uji statistik, selanjutnya melakukan redundacy analysis. Redundacy Analysis digunakan untuk mengoptimalkan kinerja pemodelan, mereduksi feature-feature yang mempunyai kemiripan atau saling berkorelasi satu sama lain (multicolinearity). Metode yang digunakan adalah `VIF Score`, metode ini biasanya digunakan dalam pemodelan regresi dan tidak lazim pada kasus klasifikasi, namun pada kasus klasifikasi ini masih applicable karena hubungan feature dan target linear. Apabila menggunakan algoritma model ensemble, sebenarnya tidak perlu melakukan redundancy analysis, karena akan otomatis terseleksi. Namun untuk mengoptimalkan resource dan mempercepat kinerja pemodelan sebaiknya feature yang digunakan tidak terlalu banyak, oleh sebab itu hal ini sangat direkomendasikan.
+
+![Feature Selection Process](images/feature-selection-process.png)
+
+**Feature Imbalance**
+
+Adanya ketidakseimbangan dalam data respons, dimana kelas 1 memiliki sampel yang jauh lebih sedikit dari kelas 0. Untuk menyeimbangkan ini, menggunakan metode SMOTE dari library imblearn. SMOTE membantu membuat sampel sintetis dalam kelas minoritas, memperbaiki ketidakseimbangan dan meningkatkan kualitas model.
+
+![Imbalance](images/feature-imbalance.png)
+
+---
+
+## Modelling & Evaluation 🤖
+
+![Model Evaluation](images/metrics-modelling.png)
+
+### **Default Parameter**
+
+**Default Parameter - Precision**
+
+| Model                        | CV Precision       | Precision_Train    | Precision_Test     | Diff               | Diff (%)           |
+| ---------------------------- | ------------------ | ------------------ | ------------------ | ------------------ | ------------------ |
+| SVC                          | 0.799378           | 0.856226           | 0.836876           | 0.019350           | 2.259904           |
+| XGBClassifier                | 0.847233           | 0.864785           | 0.827637           | 0.037148           | 4.295622           |
+| **AdaBoostClassifier** | **0.872463** | **0.879967** | **0.822993** | **0.056974** | **6.474576** |
+
+**Default Parameter - Accuracy**
+
+| Model                        | CV Accuracy        | Accuracy_Train     | Accuracy_Test      | Diff               | Diff (%)           |
+| ---------------------------- | ------------------ | ------------------ | ------------------ | ------------------ | ------------------ |
+| SVC                          | 0.832502           | 0.852899           | 0.743119           | 0.109780           | 12.871371          |
+| XGBClassifier                | 0.840023           | 0.864710           | 0.807339           | 0.057371           | 6.634668           |
+| **AdaBoostClassifier** | **0.861142** | **0.879742** | **0.816514** | **0.063229** | **7.187166** |
+
+Berdasarkan hasil evaluasi model, model adaboost akan digunakan sebagai model pada production karena mempunyai CV Precision Score yang tinggi 87% dan FIT Rate yang masih di bawah 10% yakni 6.47%.
+
+### **Hyperparameter Tuning**
+
+**Hyperparameter Tuning - Precision**
+
+| Parameter Set      | Model                        | CV Precision       | Precision_Train    | Precision_Test     | Diff               | Diff (%)           |
+| ------------------ | ---------------------------- | ------------------ | ------------------ | ------------------ | ------------------ | ------------------ |
+| **param_56** | **AdaBoostClassifier** | **0.908271** | **0.918675** | **0.843316** | **0.075359** | **8.203003** |
+| param_55           | AdaBoostClassifier           | 0.903253           | 0.910859           | 0.831003           | 0.079856           | 8.767125           |
+| param_52           | AdaBoostClassifier           | 0.900182           | 0.912634           | 0.822355           | 0.090279           | 9.892101           |
+
+**Hyperparameter Tuning - Accuracy**
+
+| Parameter Set      | Model                        | CV Accuracy        | Accuracy_Train     | Accuracy_Test      | Diff               | Diff (%)           |
+| ------------------ | ---------------------------- | ------------------ | ------------------ | ------------------ | ------------------ | ------------------ |
+| param_55           | AdaBoostClassifier           | 0.872244           | 0.910523           | 0.834862           | 0.075660           | 8.309532           |
+| **param_56** | **AdaBoostClassifier** | **0.871889** | **0.918397** | **0.850917** | **0.067479** | **7.347494** |
+| param_52           | AdaBoostClassifier           | 0.870808           | 0.912312           | 0.830275           | 0.082037           | 8.992193           |
+
+**Param_56** dipilih sebagai parameter yang digunakan pada hyperparameter tuning model adaboost. Parameter ini meningkatkan score sebelumnya 87% menjadi 90%, dengan tetap menjaga FIT rate di bawah 10%.
+
+![Model Evaluation](images/evaluation-models.png)
+
+![Feature Importance](images/feature-importance-adb.png)
+
+---
+
+## Summary & Recommendation
+
+### **Business Simulation**
+
+Menggunakan asumsi cost/promosi adalah **3 USD** dan revenue/promosi adalah **11 USD**, berikut simulasinya untuk menghitung respose rate dan profit margin.
+
+![Model Evaluation](images/business-simulation.png)
+
+|                | Sebelum Model | Sesudah Model |
+| -------------- | ------------: | ------------: |
+| Total Customer |          2240 |            60 |
+| Total Response |           334 |            32 |
+| Rate Accept    |        14.91% |        53.33% |
+| Total Cost     |          6720 |           180 |
+| Total Revenue  |          3674 |           352 |
+| Total Profit   |         -3046 |           172 |
+| Profit Margin  |       -82.91% |        48.86% |
+
+### **Business Insight & Recommendation**
+
+Berdasarkan hasil analisa, pelanggan dengan segmentasi loyal dan pelanggan dengan level pendidikan graduation adalah yang paling banyak proporsinya yakni **40% adalah pelanggan loyal** dan **53% adalah berpendidikan graduation**. Oleh sebab itu, 2 kategori ini menjadi target promosi dengan recency berkisar antara 32-46 hari dan customer lifespan 393-495 hari. Recency dan Customer Lifespan dihitung menggunakan *[confidence interval mean](https://www.investopedia.com/terms/c/confidenceinterval.asp)* (confidence level 95%).
+
+![Customer Profile Marketing Campaign](images/business-recommendation.png)
+
+![Business Recommendation](images/business-recommendation-products.png)
+
+## Dependencies
+
+Daftar library dan versionnya yang digunakan [cek disini](requirements.txt)
